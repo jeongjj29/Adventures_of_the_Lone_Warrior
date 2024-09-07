@@ -1,5 +1,7 @@
+from __init__ import CONN, CURSOR
+
 class Character:
-    def __init__(self, name, attack, max_hp, gold, level, exp):
+    def __init__(self, name, attack, max_hp, gold):
         if not (isinstance(name, str) and len(name) > 0):
             raise Exception("Name must be string longer than 0 characters.")
         if not (
@@ -77,3 +79,60 @@ class Character:
             self._exp = exp
         else:
             raise Exception("Exp must be an integer greater than or equal to 0.")
+
+    def save(self):
+        sql = """
+            INSERT INTO characters (name, attack, max_hp, gold, level, exp)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """
+        CURSOR.execute(sql, (self._name, self._attack, self._max_hp, self._gold, self._level, self._exp))
+        CONN.commit()
+
+    def update(self):
+        sql = """
+            UPDATE characters
+            SET name = ?, attack = ?, max_hp = ?, gold = ?, level = ?, exp = ?
+            WHERE id = ?
+        """
+        CURSOR.execute(sql, (self._name, self._attack, self._max_hp, self._gold, self._level, self._exp, self._id))
+        CONN.commit()
+
+    def delete(self):
+        sql = """
+            DELETE FROM characters
+            WHERE id = ?
+        """
+        CURSOR.execute(sql, (self._id,))
+        CONN.commit()
+
+    @classmethod
+    def create_table(cls):
+        sql = """
+            CREATE TABLE IF NOT EXISTS characters (
+                id INTEGER PRIMARY KEY,
+                name TEXT,
+                attack INTEGER,
+                max_hp INTEGER,
+                gold INTEGER,
+                level INTEGER,
+                exp INTEGER
+            )
+        """
+        CURSOR.execute(sql)
+        CONN.commit()
+
+    @classmethod
+    def drop_table(cls):
+        sql = """
+            DROP TABLE IF EXISTS characters
+        """
+        CURSOR.execute(sql)
+        CONN.commit()
+
+    @classmethod
+    def create(cls, name, attack, max_hp, gold, level, exp):
+        character = cls(name, attack, max_hp, gold, level, exp)
+        character.save()
+        return character
+    
+    
