@@ -1,7 +1,11 @@
-from __init__ import CONN, CURSOR
+from models.__init__ import CONN, CURSOR
+
 
 class Enemy:
-    def __init__(self, name, attack, max_hp, gold, level, exp):
+
+    all = {}
+
+    def __init__(self, name, attack, max_hp, gold):
         if not (isinstance(name, str) and len(name) > 0):
             raise Exception("Name must be string longer than 0 enemies.")
         if not (
@@ -15,8 +19,9 @@ class Enemy:
         self._max_hp = max_hp
         self._current_hp = max_hp
         self._gold = gold
-        self._level = 1
-        self._exp = 0
+
+    def __repr__(self):
+        return f"{self.name} | HP: {self.current_hp} / {self.max_hp} | Attack: {self.attack}"
 
     @property
     def name(self):
@@ -59,42 +64,52 @@ class Enemy:
         self._gold = gold
 
     @property
-    def level(self):
-        return self._level
+    def current_hp(self):
+        return self._current_hp
 
-    @level.setter
-    def level(self, level):
-        if isinstance(level, int) and level > 0:
-            self._level = level
-        else:
-            raise Exception("Level must be an integer greater than 0.")
+    @current_hp.setter
+    def current_hp(self, current_hp):
+        if not isinstance(current_hp, int):
+            raise Exception("Current HP must be an integer.")
+        self._current_hp = current_hp
 
-    @property
-    def exp(self):
-        return self._exp
-
-    @exp.setter
-    def exp(self, exp):
-        if isinstance(exp, int) and exp >= 0:
-            self._exp = exp
-        else:
-            raise Exception("Exp must be an integer greater than or equal to 0.")
+    def defend(self, damage):
+        self._current_hp -= damage
 
     def save(self):
         sql = """
-            INSERT INTO enemies (name, attack, max_hp, gold, level, exp)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO enemies (name, attack, max_hp, current_hp, gold)
+            VALUES (?, ?, ?, ?, ?)
         """
-        CURSOR.execute(sql, (self._name, self._attack, self._max_hp, self._gold, self._level, self._exp))
+        CURSOR.execute(
+            sql,
+            (
+                self._name,
+                self._attack,
+                self._max_hp,
+                self._current_hp,
+                self._gold,
+            ),
+        )
         CONN.commit()
 
     def update(self):
         sql = """
             UPDATE enemies
-            SET name = ?, attack = ?, max_hp = ?, gold = ?, level = ?, exp = ?
+            SET name = ?, attack = ?, max_hp = ?, current_hp = ?, gold = ?
             WHERE id = ?
         """
-        CURSOR.execute(sql, (self._name, self._attack, self._max_hp, self._gold, self._level, self._exp, self._id))
+        CURSOR.execute(
+            sql,
+            (
+                self._name,
+                self._attack,
+                self._max_hp,
+                self._current_hp,
+                self._gold,
+                self._id,
+            ),
+        )
         CONN.commit()
 
     def delete(self):
@@ -113,9 +128,8 @@ class Enemy:
                 name TEXT,
                 attack INTEGER,
                 max_hp INTEGER,
-                gold INTEGER,
-                level INTEGER,
-                exp INTEGER
+                current_hp INTEGER,
+                gold INTEGER
             )
         """
         CURSOR.execute(sql)
@@ -130,7 +144,31 @@ class Enemy:
         CONN.commit()
 
     @classmethod
-    def create(cls, name, attack, max_hp, gold, level, exp):
-        enemy = cls(name, attack, max_hp, gold, level, exp)
+    def create(cls, name, attack, max_hp, gold):
+        enemy = cls(name, attack, max_hp, gold)
         enemy.save()
         return enemy
+
+    @classmethod
+    def instance_from_db(cls, row):
+        enemy = cls.all.get(row[0])
+        if enemy:
+            enemy.name = row[1]
+            enemy.attack = row[2]
+            enemy.max_hp = row[3]
+            enemy.current_hp = row[4]
+            enemy.gold = row[5]
+        else:
+            enemy = cls(row[1], row[2], row[3], row[4], row[5])
+            enemy.id = row[0]
+        return enemy
+
+    @classmethod
+    def find_by_name(cls, name):
+        sql = """
+            SELECT * 
+            FROM enemies
+            WHERE name is ?
+        """
+        row = CURSOR.execute(sql, (name,)).fetchone()
+        return cls.instance_from_db(row) if row else None

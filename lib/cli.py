@@ -1,36 +1,31 @@
 # lib/cli.py
-from helpers import (
-    exit_program,
-    helper_1
-)
+from helpers import exit_program, dungeon_selection_menu
 
 
 def main():
-    start_menu()
+    print("Welcome to the adventure game!")
     while True:
         menu()
         choice = input("> ")
-        if choice == "0":
+        if choice == "1":
+            dungeon_selection_menu()
+        elif choice == "2":
+            pass
+        elif choice == "3":
+            pass
+        elif choice == "4":
             exit_program()
-        elif choice == "1":
-            helper_1()
         else:
             print("Invalid choice. Please try again.")
 
 
-
 def menu():
-    print("Please select an option:")
-    print("0. Exit the program")
-    print("1. Some useful function")
+    print("Please choose your destination:")
+    print("1. Dungeon")
+    print("2. Inn")
+    print("3. Merchant")
+    print("4. Quit game")
 
-def start_menu():
-    print("Welcome to the adventure game!")
-    print("Please enter your name:")
-    name = input("> ")
-    print(f"Hello, {name}!")
-    return
- 
 
 if __name__ == "__main__":
     main()

@@ -1,4 +1,5 @@
-from __init__ import CONN, CURSOR
+from models.__init__ import CONN, CURSOR
+
 
 class Character:
     def __init__(self, name, attack, max_hp, gold):
@@ -80,12 +81,36 @@ class Character:
         else:
             raise Exception("Exp must be an integer greater than or equal to 0.")
 
+    @property
+    def current_hp(self):
+        return self._current_hp
+
+    @current_hp.setter
+    def current_hp(self, current_hp):
+        if isinstance(current_hp, int):
+            self._current_hp = current_hp
+        else:
+            raise Exception("Current HP must be an integer.")
+
+    def defend(self, damage):
+        self.current_hp -= damage
+
     def save(self):
         sql = """
             INSERT INTO characters (name, attack, max_hp, gold, level, exp)
             VALUES (?, ?, ?, ?, ?, ?)
         """
-        CURSOR.execute(sql, (self._name, self._attack, self._max_hp, self._gold, self._level, self._exp))
+        CURSOR.execute(
+            sql,
+            (
+                self._name,
+                self._attack,
+                self._max_hp,
+                self._gold,
+                self._level,
+                self._exp,
+            ),
+        )
         CONN.commit()
 
     def update(self):
@@ -94,7 +119,18 @@ class Character:
             SET name = ?, attack = ?, max_hp = ?, gold = ?, level = ?, exp = ?
             WHERE id = ?
         """
-        CURSOR.execute(sql, (self._name, self._attack, self._max_hp, self._gold, self._level, self._exp, self._id))
+        CURSOR.execute(
+            sql,
+            (
+                self._name,
+                self._attack,
+                self._max_hp,
+                self._gold,
+                self._level,
+                self._exp,
+                self._id,
+            ),
+        )
         CONN.commit()
 
     def delete(self):
@@ -130,9 +166,7 @@ class Character:
         CONN.commit()
 
     @classmethod
-    def create(cls, name, attack, max_hp, gold, level, exp):
-        character = cls(name, attack, max_hp, gold, level, exp)
+    def create(cls, name, attack, max_hp, gold):
+        character = cls(name, attack, max_hp, gold)
         character.save()
         return character
-    
-    
