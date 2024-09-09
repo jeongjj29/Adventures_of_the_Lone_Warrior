@@ -1,5 +1,5 @@
 # lib/cli.py
-from helpers import exit_program, dungeon_selection_menu
+from helpers import exit_program, dungeon_selection_menu, inn_menu
 
 
 def main():
@@ -10,7 +10,7 @@ def main():
         if choice == "1":
             dungeon_selection_menu()
         elif choice == "2":
-            pass
+            inn_menu()
         elif choice == "3":
             pass
         elif choice == "4":

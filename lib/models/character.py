@@ -19,6 +19,9 @@ class Character:
         self._level = 1
         self._exp = 0
 
+    def __repr__(self):
+        return f"{self.name} | HP: {self.current_hp} / {self.max_hp} | Attack: {self.attack} | Gold: {self.gold} | Level: {self.level} | Exp: {self.exp} / {100 * (self.level ** 2)}"
+
     @property
     def name(self):
         return self._name
@@ -94,6 +97,18 @@ class Character:
 
     def defend(self, damage):
         self.current_hp -= damage
+
+    def level_up(self, exp_gain):
+        self._exp += exp_gain
+        if self._exp >= 100 * self._level**2:
+            self._level += 1
+            self._attack += 5
+            self._max_hp += 100
+            self._current_hp = self._max_hp
+            print(f"You have gained {exp_gain} exp.")
+            return f"You have leveled up to level {self._level}!"
+        else:
+            return f"You have gained {exp_gain} exp."
 
     def save(self):
         sql = """
