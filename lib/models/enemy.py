@@ -5,7 +5,7 @@ class Enemy:
 
     all = {}
 
-    def __init__(self, name, attack, max_hp, gold):
+    def __init__(self, name, attack, max_hp, gold, location):
         if not (isinstance(name, str) and len(name) > 0):
             raise Exception("Name must be string longer than 0 enemies.")
         if not (
@@ -19,6 +19,7 @@ class Enemy:
         self._max_hp = max_hp
         self._current_hp = max_hp
         self._gold = gold
+        self._location = location
 
     def __repr__(self):
         return f"{self.name} | HP: {self.current_hp} / {self.max_hp} | Attack: {self.attack}"
@@ -73,13 +74,23 @@ class Enemy:
             raise Exception("Current HP must be an integer.")
         self._current_hp = current_hp
 
+    @property
+    def location(self):
+        return self._location
+
+    @location.setter
+    def location(self, location):
+        if not isinstance(location, str):
+            raise Exception("Location must be a string.")
+        self._location = location
+
     def defend(self, damage):
         self._current_hp -= damage
 
     def save(self):
         sql = """
-            INSERT INTO enemies (name, attack, max_hp, current_hp, gold)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO enemies (name, attack, max_hp, current_hp, gold, location)
+            VALUES (?, ?, ?, ?, ?, ?)
         """
         CURSOR.execute(
             sql,
@@ -89,6 +100,7 @@ class Enemy:
                 self._max_hp,
                 self._current_hp,
                 self._gold,
+                self._location,
             ),
         )
         CONN.commit()
@@ -96,7 +108,7 @@ class Enemy:
     def update(self):
         sql = """
             UPDATE enemies
-            SET name = ?, attack = ?, max_hp = ?, current_hp = ?, gold = ?
+            SET name = ?, attack = ?, max_hp = ?, current_hp = ?, gold = ?, location = ?
             WHERE id = ?
         """
         CURSOR.execute(
@@ -107,6 +119,7 @@ class Enemy:
                 self._max_hp,
                 self._current_hp,
                 self._gold,
+                self._location,
                 self._id,
             ),
         )
@@ -129,7 +142,8 @@ class Enemy:
                 attack INTEGER,
                 max_hp INTEGER,
                 current_hp INTEGER,
-                gold INTEGER
+                gold INTEGER,
+                location TEXT
             )
         """
         CURSOR.execute(sql)
@@ -144,8 +158,8 @@ class Enemy:
         CONN.commit()
 
     @classmethod
-    def create(cls, name, attack, max_hp, gold):
-        enemy = cls(name, attack, max_hp, gold)
+    def create(cls, name, attack, max_hp, gold, location):
+        enemy = cls(name, attack, max_hp, gold, location)
         enemy.save()
         return enemy
 
@@ -158,8 +172,9 @@ class Enemy:
             enemy.max_hp = row[3]
             enemy.current_hp = row[4]
             enemy.gold = row[5]
+            enemy.location = row[6]
         else:
-            enemy = cls(row[1], row[2], row[3], row[4], row[5])
+            enemy = cls(row[1], row[2], row[3], row[5], row[6])
             enemy.id = row[0]
         return enemy
 
@@ -171,4 +186,14 @@ class Enemy:
             WHERE name is ?
         """
         row = CURSOR.execute(sql, (name,)).fetchone()
+        return cls.instance_from_db(row) if row else None
+
+    @classmethod
+    def find_by_location(cls, location):
+        sql = """
+            SELECT * 
+            FROM enemies
+            WHERE location is ?
+        """
+        row = CURSOR.execute(sql, (location,)).fetchone()
         return cls.instance_from_db(row) if row else None

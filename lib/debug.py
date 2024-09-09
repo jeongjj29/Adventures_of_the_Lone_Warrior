@@ -16,10 +16,15 @@ def reset_database():
     Enemy.create_table()
 
     Character.create("Player", 10, 100, 0)
-    Enemy.create("Slime", 5, 20, 10)
-    Enemy.create("Spider", 10, 40, 20)
-    Enemy.create("Zombie", 15, 60, 30)
-    Enemy.create("Dragon", 20, 80, 40)
+    Character.create("Merchant", 1000, 1000, 1000)
+    Enemy.create("Slime", 5, 20, 10, "cave")
+    Enemy.create("Slime", 5, 20, 10, "cave")
+    Enemy.create("Spider", 10, 40, 20, "forest")
+    Enemy.create("Spider", 10, 40, 20, "forest")
+    Enemy.create("Zombie", 15, 60, 30, "graveyard")
+    Enemy.create("Zombie", 15, 60, 30, "graveyard")
+    Enemy.create("Dragon", 20, 80, 40, "den")
+    Enemy.create("Dragon", 20, 80, 40, "den")
 
 
 reset_database()

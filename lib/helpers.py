@@ -31,10 +31,13 @@ def dungeon_selection_menu():
         dungeon_menu("cave")
     elif choice == "2":
         print("You have entered the Spider's Forest.")
+        dungeon_menu("forest")
     elif choice == "3":
         print("You have entered the Undead Graveyard.")
+        dungeon_menu("graveyard")
     elif choice == "4":
         print("You have entered the Dragon's Den.")
+        dungeon_menu("den")
     elif choice == "5":
         return
     else:
@@ -42,11 +45,9 @@ def dungeon_selection_menu():
 
 
 def dungeon_menu(location):
-    if location == "cave":
-        dungeon_monster = Enemy.create("Slime", 5, 20, 5)
-        print(f"You have encountered a {dungeon_monster.name}.")
+    dungeon_monster = Enemy.find_by_location(location)
     while dungeon_monster.current_hp > 0 and player.current_hp > 0:
-        print(enemy_stats(dungeon_monster))
+        print(dungeon_monster.__repr__())
         print(player_stats(player))
         print("What would you like to do?")
         print("1. Fight")
@@ -58,7 +59,7 @@ def dungeon_menu(location):
             battle_menu(dungeon_monster, player)
         elif choice == "2":
             print(f"You run away from the {dungeon_monster.name}.")
-            dungeon_monster.delete()
+            return
         else:
             print("Invalid choice. Please try again.")
 
@@ -70,8 +71,10 @@ def battle_menu(enemy, player):
     print(f"{enemy.name} has dealt {enemy.attack} damage to you.")
 
     if enemy.current_hp <= 0:
-        print("You won the battle!")
-
+        player.exp += enemy.max_hp
+        player.gold += enemy.gold
+        print(f"You have defeated the {enemy.name}.")
+        print(f"You have earned {enemy.max_hp} exp and {enemy.gold} gold.")
     if player.current_hp <= 0:
         print("You died.")
         exit_program()
