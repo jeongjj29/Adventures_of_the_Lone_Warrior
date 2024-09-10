@@ -3,12 +3,20 @@ from models.__init__ import CONN, CURSOR
 
 
 class Equipment:
-    def __init__(self, name, attack, max_hp, gold, owner):
+
+    all = {}
+
+    def __init__(self, name, attack, max_hp, gold, type, owner_id, id=None):
+        self.id = id
         self.name = name
         self.attack = attack
         self.max_hp = max_hp
         self.gold = gold
-        self.owner_id = owner
+        self.type = type
+        self.owner_id = owner_id
+
+    def __repr__(self):
+        return f"{self.name} | Attack: +{self.attack} | Max HP: +{self.max_hp} | Price: {self.gold} | Type: {self.type}"
 
     @property
     def name(self):
@@ -51,6 +59,16 @@ class Equipment:
         self._gold = gold
 
     @property
+    def type(self):
+        return self._type
+
+    @type.setter
+    def type(self, type):
+        if not isinstance(type, str):
+            raise Exception("Type must be a string.")
+        self._type = type
+
+    @property
     def owner_id(self):
         return self._owner_id
 
@@ -58,19 +76,12 @@ class Equipment:
     def owner_id(self, owner_id):
         if not (isinstance(owner_id, int) and Character.find_by_id(owner_id)):
             raise Exception("Owner must be a character.")
-        self._owner = owner_id
-
-    def change_owner(self, buyer_id):
-        if buyer_id.gold - self.gold < 0:
-            print("Not enough gold.")
-        buyer_id.gold -= self.gold
-        seller_id.gold += self.gold
-        self.owner = buyer_id
+        self._owner_id = owner_id
 
     def save(self):
         sql = """
-            INSERT INTO equipment (name, attack, max_hp, gold, owner_id)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO equipment (name, attack, max_hp, gold, type, owner_id)
+            VALUES (?, ?, ?, ?, ?, ?)
         """
         CURSOR.execute(
             sql,
@@ -79,6 +90,7 @@ class Equipment:
                 self._attack,
                 self._max_hp,
                 self._gold,
+                self._type,
                 self._owner_id,
             ),
         )
@@ -87,7 +99,7 @@ class Equipment:
     def update(self):
         sql = """
             UPDATE equipment
-            SET name = ?, attack = ?, max_hp = ?, gold = ?, owner_id = ?
+            SET name = ?, attack = ?, max_hp = ?, gold = ?, type = ?, owner_id = ?
             WHERE name = ?
         """
         CURSOR.execute(
@@ -97,7 +109,8 @@ class Equipment:
                 self._attack,
                 self._max_hp,
                 self._gold,
-                self._owner,
+                self._type,
+                self._owner_id,
                 self._name,
             ),
         )
@@ -120,9 +133,50 @@ class Equipment:
                 attack INTEGER,
                 max_hp INTEGER,
                 gold INTEGER,
+                type TEXT,
                 owner_id INTEGER,
                 FOREIGN KEY(owner_id) REFERENCES characters(id)
             )
         """
         CURSOR.execute(sql)
         CONN.commit()
+
+    @classmethod
+    def drop_table(cls):
+        sql = """
+            DROP TABLE IF EXISTS equipment
+        """
+        CURSOR.execute(sql)
+        CONN.commit()
+
+    @classmethod
+    def create(cls, name, attack, max_hp, gold, type, owner_id):
+        equipment = cls(name, attack, max_hp, gold, type, owner_id)
+        equipment.save()
+        return equipment
+
+    @classmethod
+    def instance_from_db(cls, row):
+        equipment = cls.all.get(row[0])
+        if equipment:
+            equipment.name = row[1]
+            equipment.attack = row[2]
+            equipment.max_hp = row[3]
+            equipment.gold = row[4]
+            equipment.type = row[5]
+            equipment.owner_id = row[6]
+        else:
+            equipment = cls(row[1], row[2], row[3], row[4], row[5], row[6])
+            equipment.id = row[0]
+            cls.all[equipment.id] = equipment
+        return equipment
+
+    @classmethod
+    def find_by_id(cls, id):
+        sql = """
+            SELECT *
+            FROM equipment
+            WHERE id = ?
+        """
+        row = CURSOR.execute(sql, (id,)).fetchone()
+        return cls.instance_from_db(row) if row else None
