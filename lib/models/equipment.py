@@ -1,13 +1,14 @@
 from models.character import Character
+from models.__init__ import CONN, CURSOR
 
 
 class Equipment:
     def __init__(self, name, attack, max_hp, gold, owner):
-        self._name = name
-        self._attack = attack
-        self._max_hp = max_hp
-        self._gold = gold
-        self._owner = owner
+        self.name = name
+        self.attack = attack
+        self.max_hp = max_hp
+        self.gold = gold
+        self.owner_id = owner
 
     @property
     def name(self):
@@ -50,18 +51,78 @@ class Equipment:
         self._gold = gold
 
     @property
-    def owner(self):
-        return self._owner
+    def owner_id(self):
+        return self._owner_id
 
-    @owner.setter
-    def owner(self, owner):
-        if not isinstance(owner, Character):
+    @owner_id.setter
+    def owner_id(self, owner_id):
+        if not (isinstance(owner_id, int) and Character.find_by_id(owner_id)):
             raise Exception("Owner must be a character.")
-        self._owner = owner
+        self._owner = owner_id
 
-    def change_owner(self, buyer, seller):
-        if buyer.gold - self.gold < 0:
+    def change_owner(self, buyer_id):
+        if buyer_id.gold - self.gold < 0:
             print("Not enough gold.")
-        buyer.gold -= self.gold
-        seller.gold += self.gold
-        self.owner = buyer
+        buyer_id.gold -= self.gold
+        seller_id.gold += self.gold
+        self.owner = buyer_id
+
+    def save(self):
+        sql = """
+            INSERT INTO equipment (name, attack, max_hp, gold, owner_id)
+            VALUES (?, ?, ?, ?, ?)
+        """
+        CURSOR.execute(
+            sql,
+            (
+                self._name,
+                self._attack,
+                self._max_hp,
+                self._gold,
+                self._owner_id,
+            ),
+        )
+        CONN.commit()
+
+    def update(self):
+        sql = """
+            UPDATE equipment
+            SET name = ?, attack = ?, max_hp = ?, gold = ?, owner_id = ?
+            WHERE name = ?
+        """
+        CURSOR.execute(
+            sql,
+            (
+                self._name,
+                self._attack,
+                self._max_hp,
+                self._gold,
+                self._owner,
+                self._name,
+            ),
+        )
+        CONN.commit()
+
+    def delete(self):
+        sql = """
+            DELETE FROM equipment
+            WHERE name = ?
+        """
+        CURSOR.execute(sql, (self._id,))
+        CONN.commit()
+
+    @classmethod
+    def create_table(cls):
+        sql = """
+            CREATE TABLE IF NOT EXISTS equipment (
+                id INTEGER PRIMARY KEY,
+                name TEXT,
+                attack INTEGER,
+                max_hp INTEGER,
+                gold INTEGER,
+                owner_id INTEGER,
+                FOREIGN KEY(owner_id) REFERENCES characters(id)
+            )
+        """
+        CURSOR.execute(sql)
+        CONN.commit()
