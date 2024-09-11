@@ -19,6 +19,16 @@ class Character:
         return f"{self.name} | HP: {self.current_hp} / {self.max_hp} | Attack: {self.attack} | Gold: {self.gold} | Level: {self.level} | Exp: {self.exp} / {100 * (self.level ** 2)}"
 
     @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, id):
+        if not isinstance(id, int):
+            raise Exception("ID must be an integer.")
+        self._id = id
+
+    @property
     def name(self):
         return self._name
 

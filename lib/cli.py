@@ -15,6 +15,7 @@ def main():
         print("1. Dungeon")
         print("2. Inn")
         print("3. Merchant")
+        print("4. Display inventory")
         print("5. Quit game")
         choice = input("> ")
         if choice == "1":
@@ -23,6 +24,9 @@ def main():
             inn_menu()
         elif choice == "3":
             merchant_menu()
+        elif choice == "4":
+            display_inventory(player)
+            inventory_menu()
         elif choice == "5":
             exit_program()
         else:
@@ -115,6 +119,10 @@ def buy_menu(buyer, seller):
         return
     else:
         buy_sell(choice, buyer, seller)
+
+
+def inventory_menu():
+    print("What would you like to do?")
 
 
 if __name__ == "__main__":

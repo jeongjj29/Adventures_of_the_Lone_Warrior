@@ -33,6 +33,11 @@ def reset_database():
     Equipment.create("Diamond Sword", 20, 0, 50, "weapon", merchant.id)
     Equipment.create("Mithril Sword", 30, 0, 100, "weapon", merchant.id)
     Equipment.create("Adamantium Sword", 40, 0, 200, "weapon", merchant.id)
+    Equipment.create("Wooden Armor", 0, 5, 10, "armor", merchant.id)
+    Equipment.create("Iron Armor", 0, 10, 20, "armor", merchant.id)
+    Equipment.create("Diamond Armor", 0, 20, 50, "armor", merchant.id)
+    Equipment.create("Mithril Armor", 0, 30, 100, "armor", merchant.id)
+    Equipment.create("Adamantium Armor", 0, 40, 200, "armor", merchant.id)
 
 
 reset_database()
