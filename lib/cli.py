@@ -123,6 +123,18 @@ def buy_menu(buyer, seller):
 
 def inventory_menu():
     print("What would you like to do?")
+    print("Select equipment to equip by ID")
+    print("0. Leave")
+    choice = input("> ")
+    if choice == "0":
+        return
+    else:
+        equipment = Equipment.find_by_id(choice)
+        if equipment.owner_id == player.id:
+            player.equip(equipment)
+            print(player.__repr__())
+            return
+        print("Invalid choice. Please try again.")
 
 
 if __name__ == "__main__":

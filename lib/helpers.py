@@ -14,7 +14,7 @@ def battle(enemy, player):
         print(f"You have earned {enemy.gold} gold.")
         print(player.__repr__())
         player.update()
-        return
+
     player.defend(enemy.attack)
     print(f"{enemy.name} has dealt {enemy.attack} damage to you.")
     if player.current_hp <= 0:
@@ -59,8 +59,10 @@ def buy_sell(item_id, buyer, seller):
     seller.gold += item.gold
     item.owner_id = buyer.id
     item.update()
-
-    print(f"You have bought {item.name} for {item.gold} gold.")
+    if buyer.id == 1:
+        print(f"You have bought {item.name} for {item.gold} gold.")
+    if buyer.id == 2:
+        print(f"You have sold {item.name} for {item.gold} gold.")
 
 
 def exit_program():

@@ -14,6 +14,8 @@ class Character:
         self.gold = gold
         self.level = level
         self.exp = exp
+        self.weapon = None
+        self.armor = None
 
     def __repr__(self):
         return f"{self.name} | HP: {self.current_hp} / {self.max_hp} | Attack: {self.attack} | Gold: {self.gold} | Level: {self.level} | Exp: {self.exp} / {100 * (self.level ** 2)}"
@@ -24,8 +26,6 @@ class Character:
 
     @id.setter
     def id(self, id):
-        if not isinstance(id, int):
-            raise Exception("ID must be an integer.")
         self._id = id
 
     @property
@@ -118,6 +118,31 @@ class Character:
             print(f"You have leveled up to level {self._level}!")
         else:
             print(f"You have gained {exp_gain} exp.")
+
+    def equip(self, equipment):
+        if equipment.type == "weapon":
+            if self.weapon is not None:
+                self.unequip(self.weapon)
+
+            self.weapon = equipment
+            self.attack += equipment.attack
+            self.update()
+        elif equipment.type == "armor":
+            if self.armor is not None:
+                self.unequip(self.armor)
+            self.armor = equipment
+            self.max_hp += equipment.max_hp
+            self.update()
+
+    def unequip(self, equipment):
+        if equipment.type == "weapon":
+            self.weapon = None
+            self.attack -= equipment.attack
+            self.update()
+        elif equipment.type == "armor":
+            self.armor = None
+            self.max_hp -= equipment.max_hp
+            self.update()
 
     def inventory(self):
         sql = """
