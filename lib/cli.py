@@ -16,7 +16,7 @@ merchant = Character.find_by_id(1)
 
 
 def welcome_menu():
-    print("Welcome to the adventure game!")
+    print("Welcome to the Adventures of the Lone Warrior!")
     print("Would you like to create a new character or load an existing one?")
     print("\033[33m1. Create new character")
     print("2. Load existing character")
@@ -30,7 +30,7 @@ def welcome_menu():
         delete_character_menu()
     else:
         print("Invalid choice. Please try again.")
-        welcome_menu()
+        return welcome_menu()
 
 
 def character_creation_menu():
@@ -52,20 +52,27 @@ def character_creation_menu():
         return player
     else:
         print("Invalid choice. Please try again.")
-        character_creation_menu()
+        return character_creation_menu()
 
 
 def load_character_menu():
     print("Please select a character:")
+    print("0. Return")
     display_characters()
     choice = input("> ")
-    player = Character.find_by_id(choice)
-    if player is None:
+    if choice == "0":
+        return welcome_menu()
+    elif choice == "1":
         print("Invalid choice. Please try again.")
-        load_character_menu()
+        return load_character_menu()
     else:
-        print(f"You have loaded {player.name}.")
-        return player
+        player = Character.find_by_id(choice)
+        if player is None:
+            print("Invalid choice. Please try again.")
+            return load_character_menu()
+        else:
+            print(f"You have loaded {player.name}.")
+            return player
 
 
 def delete_character_menu():
@@ -89,11 +96,11 @@ print(player)
 def main():
     while True:
         print("Please choose your destination:")
-        print("1. Dungeon")
+        print("\033[33m1. Dungeon")
         print("2. Inn")
         print("3. Merchant")
         print("4. Display inventory")
-        print("5. Quit game")
+        print("5. Quit game\033[0m")
         choice = input("> ")
         if choice == "1":
             dungeon_selection_menu()
@@ -112,28 +119,57 @@ def main():
 
 def dungeon_selection_menu():
     print("Please select a dungeon.")
-    print("1. Slime Cave")
-    print("2. Spider's Forest")
+    print("\033[33m1. Slime Cave")
+    print("2. Forbidden Forest")
     print("3. Undead Graveyard")
     print("4. Dragon's Den")
-    print("5. Return to the main menu")
+    print("5. Return to the main menu\033[0m")
 
     choice = input("> ")
     if choice == "1":
         print("You have entered the Slime Cave.")
-        dungeon_menu("cave")
+        dungeon_menu("Slime")
+        dungeon_menu("Slime")
+        dungeon_menu("Slime")
+        dungeon_menu("Giant Slime")
+        dungeon_menu("Giant Slime")
+        dungeon_menu("Rimuru")
         dungeon_selection_menu()
     elif choice == "2":
         print("You have entered the Spider's Forest.")
-        dungeon_menu("forest")
+        dungeon_menu("Spider")
+        dungeon_menu("Spider")
+        dungeon_menu("Goblin")
+        dungeon_menu("Goblin")
+        dungeon_menu("Orc")
+        dungeon_menu("Orc")
+        dungeon_menu("Troll")
+        dungeon_menu("Troll")
+        dungeon_menu("Hamsuke")
         dungeon_selection_menu()
     elif choice == "3":
         print("You have entered the Undead Graveyard.")
-        dungeon_menu("graveyard")
+        dungeon_menu("Zombie")
+        dungeon_menu("Zombie")
+        dungeon_menu("Skeleton")
+        dungeon_menu("Skeleton")
+        dungeon_menu("Vampire")
+        dungeon_menu("Vampire")
+        dungeon_menu("Death Knight")
+        dungeon_menu("Death Knight")
+        dungeon_menu("Lich")
         dungeon_selection_menu()
     elif choice == "4":
         print("You have entered the Dragon's Den.")
-        dungeon_menu("den")
+        dungeon_menu("Wyvern")
+        dungeon_menu("Wyvern")
+        dungeon_menu("Griffon")
+        dungeon_menu("Griffon")
+        dungeon_menu("Dragon")
+        dungeon_menu("Dragon")
+        dungeon_menu("Hydra")
+        dungeon_menu("Hydra")
+        dungeon_menu("Veldora")
         dungeon_selection_menu()
     elif choice == "5":
         return
@@ -142,13 +178,13 @@ def dungeon_selection_menu():
 
 
 def dungeon_menu(location):
-    dungeon_monster = Enemy.find_by_location(location)
+    dungeon_monster = Enemy.find_by_name(location)
     while dungeon_monster.current_hp > 0 and player.current_hp > 0:
         print(player.__repr__())
         print(dungeon_monster.__repr__())
         print("What would you like to do?")
-        print("1. Fight")
-        print("2. Flee")
+        print("\033[33m1. Fight")
+        print("2. Flee\033[0m")
 
         choice = input("> ")
         if choice == "1":
@@ -164,8 +200,8 @@ def dungeon_menu(location):
 def inn_menu():
     print("Welcome to the inn.")
     print("What would you like to do?")
-    print("1. Rest (10 gold)")
-    print("2. Leave")
+    print("\033[33m1. Rest (10 gold)")
+    print("2. Leave\033[0m")
 
     choice = input("> ")
     if choice == "1":
@@ -178,9 +214,9 @@ def inn_menu():
 def merchant_menu():
     print("Welcome to the general store.")
     print("What would you like to do?")
-    print("1. Buy equipment")
+    print("\033[33m1. Buy equipment")
     print("2. Sell equipment")
-    print("3. Leave")
+    print("3. Leave\033[0m")
 
     choice = input("> ")
     if choice == "1":
@@ -195,9 +231,9 @@ def merchant_menu():
 
 def buy_menu(buyer, seller):
     display_inventory(seller)
-    print(f"Current Gold: {buyer.gold}")
-    print("Select item by ID")
-    print("0. Leave")
+    print(f"\033[34mCurrent Gold: {buyer.gold}")
+    print("\033[33mSelect item by ID")
+    print("0. Leave\033[0m")
     choice = input("> ")
     if choice == "0":
         return
@@ -207,8 +243,8 @@ def buy_menu(buyer, seller):
 
 def inventory_menu():
     print("What would you like to do?")
-    print("Select equipment to equip by ID")
-    print("0. Leave")
+    print("\033[33mSelect equipment to equip by ID")
+    print("0. Leave\033[0m")
     choice = input("> ")
     if choice == "0":
         return

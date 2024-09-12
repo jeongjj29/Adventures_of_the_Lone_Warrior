@@ -20,21 +20,43 @@ def reset_database():
 
     merchant = Character.create("Merchant", 1000, 1000, 1000, 10000, 100, 0)
 
+    # Name, Attack, Max HP, Gold, Location
     Enemy.create("Slime", 5, 20, 10, "cave")
-    Enemy.create("Spider", 10, 40, 20, "forest")
-    Enemy.create("Zombie", 15, 60, 30, "graveyard")
-    Enemy.create("Dragon", 20, 80, 40, "den")
+    Enemy.create("Slime", 5, 20, 10, "cave")
+    Enemy.create("Giant Slime", 10, 40, 20, "cave")
+    Enemy.create("Giant Slime", 10, 40, 20, "cave")
+    Enemy.create("Rimuru", 50, 1000, 1000, "cave")
 
+    Enemy.create("Spider", 10, 40, 20, "forest")
+    Enemy.create("Goblin", 10, 40, 60, "forest")
+    Enemy.create("Orc", 20, 80, 100, "forest")
+    Enemy.create("Troll", 30, 100, 150, "forest")
+    Enemy.create("Hamsuke", 50, 1000, 1000, "forest")
+
+    Enemy.create("Zombie", 15, 60, 30, "graveyard")
+    Enemy.create("Skeleton", 20, 80, 50, "graveyard")
+    Enemy.create("Vampire", 30, 100, 80, "graveyard")
+    Enemy.create("Death Knight", 50, 300, 200, "graveyard")
+    Enemy.create("Lich", 55, 700, 900, "graveyard")
+
+    Enemy.create("Wyvern", 20, 80, 40, "den")
+    Enemy.create("Griffon", 30, 120, 80, "den")
+    Enemy.create("Dragon", 50, 300, 250, "den")
+    Enemy.create("Hydra", 75, 1000, 1000, "den")
+    Enemy.create("Veldora", 100, 2500, 4000, "den")
+
+    # Name, Attack, Max HP, Gold, Type, Owner ID
     Equipment.create("Wooden Sword", 5, 0, 10, "weapon", merchant.id)
-    Equipment.create("Iron Sword", 10, 0, 20, "weapon", merchant.id)
-    Equipment.create("Diamond Sword", 20, 0, 50, "weapon", merchant.id)
-    Equipment.create("Mithril Sword", 30, 0, 100, "weapon", merchant.id)
-    Equipment.create("Adamantium Sword", 40, 0, 200, "weapon", merchant.id)
-    Equipment.create("Wooden Armor", 0, 5, 10, "armor", merchant.id)
-    Equipment.create("Iron Armor", 0, 10, 20, "armor", merchant.id)
-    Equipment.create("Diamond Armor", 0, 20, 50, "armor", merchant.id)
-    Equipment.create("Mithril Armor", 0, 30, 100, "armor", merchant.id)
-    Equipment.create("Adamantium Armor", 0, 40, 200, "armor", merchant.id)
+    Equipment.create("Iron Sword", 10, 0, 50, "weapon", merchant.id)
+    Equipment.create("Diamond Sword", 20, 0, 100, "weapon", merchant.id)
+    Equipment.create("Mithril Sword", 30, 0, 300, "weapon", merchant.id)
+    Equipment.create("Adamantium Sword", 40, 0, 500, "weapon", merchant.id)
+    Equipment.create("Wooden Armor", 0, 10, 10, "armor", merchant.id)
+    Equipment.create("Iron Armor", 0, 50, 50, "armor", merchant.id)
+    Equipment.create("Diamond Armor", 0, 100, 100, "armor", merchant.id)
+    Equipment.create("Mithril Armor", 0, 300, 300, "armor", merchant.id)
+    Equipment.create("Adamantium Armor", 0, 500, 500, "armor", merchant.id)
+    Equipment.create("Excalibur", 100, 1000, 1000, "weapon", merchant.id)
 
 
 reset_database()

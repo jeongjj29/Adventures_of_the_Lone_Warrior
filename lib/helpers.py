@@ -5,6 +5,8 @@ from models.equipment import Equipment
 
 
 def display_characters():
+    if Character.all() == []:
+        print("No characters found.")
     for character in Character.all():
         if not character.name == "Merchant":
             print(f"\033[33m{character.id}. {character.name}\033[0m")
@@ -49,7 +51,7 @@ def display_inventory(character):
         print("Inventory is empty.")
     for item in character_inventory:
         print(
-            f"{item[0]}. {item[1]} | +{item[2]} Attack | +{item[3]} Max HP | {item[4]} Gold"
+            f"\033[33m{item[0]}. {item[1]} | +{item[2]} Attack | +{item[3]} Max HP | {item[4]} Gold\033[0m"
         )
 
 
@@ -66,9 +68,9 @@ def buy_sell(item_id, buyer, seller):
     item.owner_id = buyer.id
     item.update()
     if buyer.id == 1:
-        print(f"You have bought {item.name} for {item.gold} gold.")
+        print(f"\033[32mYou have bought {item.name} for {item.gold} gold.\033[0m")
     if buyer.id == 2:
-        print(f"You have sold {item.name} for {item.gold} gold.")
+        print(f"\033[32mYou have sold {item.name} for {item.gold} gold.\033[0m")
 
 
 def character_creation(name, type):
