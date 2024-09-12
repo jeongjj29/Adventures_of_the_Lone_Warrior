@@ -12,7 +12,7 @@ from models.character import Character
 from models.enemy import Enemy
 from models.equipment import Equipment
 
-merchant = Character.find_by_id(1)
+merchant = Character.find_by_name("Merchant")
 
 
 def welcome_menu():
@@ -90,11 +90,12 @@ def delete_character_menu():
 
 
 player = welcome_menu()
-print(player)
 
 
 def main():
     while True:
+        print(player)
+        print("You are in the Town Square.")
         print("Please choose your destination:")
         print("\033[33m1. Dungeon")
         print("2. Inn")
@@ -128,47 +129,46 @@ def dungeon_selection_menu():
     choice = input("> ")
     if choice == "1":
         print("You have entered the Slime Cave.")
-        dungeon_menu("Slime")
-        dungeon_menu("Slime")
-        dungeon_menu("Slime")
-        dungeon_menu("Giant Slime")
-        dungeon_menu("Giant Slime")
+        for i in range(10):
+            dungeon_menu("Slime")
+        for i in range(5):
+            dungeon_menu("Giant Slime")
         dungeon_menu("Rimuru")
         dungeon_selection_menu()
     elif choice == "2":
         print("You have entered the Spider's Forest.")
-        dungeon_menu("Spider")
-        dungeon_menu("Spider")
-        dungeon_menu("Goblin")
-        dungeon_menu("Goblin")
-        dungeon_menu("Orc")
-        dungeon_menu("Orc")
-        dungeon_menu("Troll")
-        dungeon_menu("Troll")
+        for i in range(10):
+            dungeon_menu("Spider")
+        for i in range(5):
+            dungeon_menu("Goblin")
+        for i in range(5):
+            dungeon_menu("Orc")
+        for i in range(5):
+            dungeon_menu("Troll")
         dungeon_menu("Hamsuke")
         dungeon_selection_menu()
     elif choice == "3":
         print("You have entered the Undead Graveyard.")
-        dungeon_menu("Zombie")
-        dungeon_menu("Zombie")
-        dungeon_menu("Skeleton")
-        dungeon_menu("Skeleton")
-        dungeon_menu("Vampire")
-        dungeon_menu("Vampire")
-        dungeon_menu("Death Knight")
-        dungeon_menu("Death Knight")
+        for i in range(10):
+            dungeon_menu("Zombie")
+        for i in range(5):
+            dungeon_menu("Skeleton")
+        for i in range(5):
+            dungeon_menu("Vampire")
+        for i in range(5):
+            dungeon_menu("Death Knight")
         dungeon_menu("Lich")
         dungeon_selection_menu()
     elif choice == "4":
         print("You have entered the Dragon's Den.")
-        dungeon_menu("Wyvern")
-        dungeon_menu("Wyvern")
-        dungeon_menu("Griffon")
-        dungeon_menu("Griffon")
-        dungeon_menu("Dragon")
-        dungeon_menu("Dragon")
-        dungeon_menu("Hydra")
-        dungeon_menu("Hydra")
+        for i in range(10):
+            dungeon_menu("Wyvern")
+        for i in range(5):
+            dungeon_menu("Griffon")
+        for i in range(5):
+            dungeon_menu("Dragon")
+        for i in range(5):
+            dungeon_menu("Hydra")
         dungeon_menu("Veldora")
         dungeon_selection_menu()
     elif choice == "5":
@@ -192,7 +192,7 @@ def dungeon_menu(location):
             battle(dungeon_monster, player)
         elif choice == "2":
             print(f"You run away from the {dungeon_monster.name}.")
-            return
+            main()
         else:
             print("Invalid choice. Please try again.")
 
@@ -252,7 +252,7 @@ def inventory_menu():
         equipment = Equipment.find_by_id(choice)
         if equipment.owner_id == player.id:
             player.equip(equipment)
-            print(player.__repr__())
+            print(f"You equipped {equipment.name}.")
             return
         print("Invalid choice. Please try again.")
 

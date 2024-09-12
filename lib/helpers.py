@@ -17,7 +17,7 @@ def battle(enemy, player):
     print(f"You have dealt {player.attack} damage to the {enemy.name}.")
     if enemy.current_hp <= 0:
         print(f"You have defeated the {enemy.name}.")
-        player.level_up(enemy.max_hp)
+        player.level_up(enemy.gold)
         player.gold += enemy.gold
         print(f"\033[32mYou have earned {enemy.gold} gold.\033[0m")
         print(player.__repr__())
@@ -67,10 +67,12 @@ def buy_sell(item_id, buyer, seller):
     seller.gold += item.gold
     item.owner_id = buyer.id
     item.update()
-    if buyer.id == 1:
-        print(f"\033[32mYou have bought {item.name} for {item.gold} gold.\033[0m")
-    if buyer.id == 2:
+    buyer.update()
+    seller.update()
+    if buyer == Character.find_by_name("Merchant"):
         print(f"\033[32mYou have sold {item.name} for {item.gold} gold.\033[0m")
+    else:
+        print(f"\033[32mYou have bought {item.name} for {item.gold} gold.\033[0m")
 
 
 def character_creation(name, type):
