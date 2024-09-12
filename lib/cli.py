@@ -16,6 +16,26 @@ merchant = Character.find_by_name("Merchant")
 
 
 def welcome_menu():
+    print(
+        """
+          ___      _                 _                                __   _   _          
+         / _ \    | |               | |                              / _| | | | |         
+        / /_\ \ __| |_   _____ _ __ | |_ _   _ _ __ ___  ___    ___ | |_  | |_| |__   ___ 
+        |  _  |/ _` \ \ / / _ \ '_ \| __| | | | '__/ _ \/ __|  / _ \|  _| | __| '_ \ / _ \\
+        | | | | (_| |\ V /  __/ | | | |_| |_| | | |  __/\__ \ | (_) | |   | |_| | | |  __/
+        \_| |_/\__,_| \_/ \___|_| |_|\__|\__,_|_|  \___||___/  \___/|_|    \__|_| |_|\___|
+                                                                                  
+                                                                                  
+                 _                        _    _                 _                      
+                | |                      | |  | |               (_)                     
+                | |     ___  _ __   ___  | |  | | __ _ _ __ _ __ _  ___  _ __           
+                | |    / _ \| '_ \ / _ \ | |/\| |/ _` | '__| '__| |/ _ \| '__|          
+                | |___| (_) | | | |  __/ \  /\  / (_| | |  | |  | | (_) | |             
+                \_____/\___/|_| |_|\___|  \/  \/ \__,_|_|  |_|  |_|\___/|_|             
+                                                                                  
+                                                                                 
+    """
+    )
     print("Welcome to the Adventures of the Lone Warrior!")
     print("Would you like to create a new character or load an existing one?")
     print("\033[33m1. Create new character")
@@ -77,8 +97,11 @@ def load_character_menu():
 
 def delete_character_menu():
     print("Please select a character:")
+    print("0. Return")
     display_characters()
     choice = input("> ")
+    if choice == "0":
+        return welcome_menu()
     player = Character.find_by_id(choice)
     if player is None:
         print("Invalid choice. Please try again.")
