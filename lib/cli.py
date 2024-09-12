@@ -56,6 +56,9 @@ def welcome_menu():
 def character_creation_menu():
     print("Please enter your name:")
     name = input("> ")
+    if not (isinstance(name, str) and len(name) > 0):
+        print("Invalid Name")
+        return character_creation_menu()
     print("Please choose your playstyle:")
     print("\033[33m1. DPS")
     print("2. Tank")
