@@ -1,15 +1,92 @@
 # lib/cli.py
-from helpers import exit_program, battle, rest, display_inventory, buy_sell
+from helpers import (
+    exit_program,
+    battle,
+    rest,
+    display_inventory,
+    buy_sell,
+    display_characters,
+    character_creation,
+)
 from models.character import Character
 from models.enemy import Enemy
 from models.equipment import Equipment
 
-player = Character.find_by_id(1)
-merchant = Character.find_by_id(2)
+merchant = Character.find_by_id(1)
+
+
+def welcome_menu():
+    print("Welcome to the adventure game!")
+    print("Would you like to create a new character or load an existing one?")
+    print("\033[33m1. Create new character")
+    print("2. Load existing character")
+    print("3. Delete existing character\033[0m")
+    choice = input("> ")
+    if choice == "1":
+        return character_creation_menu()
+    elif choice == "2":
+        return load_character_menu()
+    elif choice == "3":
+        delete_character_menu()
+    else:
+        print("Invalid choice. Please try again.")
+        welcome_menu()
+
+
+def character_creation_menu():
+    print("Please enter your name:")
+    name = input("> ")
+    print("Please choose your playstyle:")
+    print("\033[33m1. DPS")
+    print("2. Tank")
+    print("3. Balanced\033[0m")
+    choice = input("> ")
+    if choice == "1":
+        player = character_creation(name, "dps")
+        return player
+    elif choice == "2":
+        player = character_creation(name, "tank")
+        return player
+    elif choice == "3":
+        player = character_creation(name, "balanced")
+        return player
+    else:
+        print("Invalid choice. Please try again.")
+        character_creation_menu()
+
+
+def load_character_menu():
+    print("Please select a character:")
+    display_characters()
+    choice = input("> ")
+    player = Character.find_by_id(choice)
+    if player is None:
+        print("Invalid choice. Please try again.")
+        load_character_menu()
+    else:
+        print(f"You have loaded {player.name}.")
+        return player
+
+
+def delete_character_menu():
+    print("Please select a character:")
+    display_characters()
+    choice = input("> ")
+    player = Character.find_by_id(choice)
+    if player is None:
+        print("Invalid choice. Please try again.")
+        delete_character_menu()
+    else:
+        print(f"You have deleted {player.name}.")
+        player.delete()
+        welcome_menu()
+
+
+player = welcome_menu()
+print(player)
 
 
 def main():
-    print("Welcome to the adventure game!")
     while True:
         print("Please choose your destination:")
         print("1. Dungeon")
@@ -45,15 +122,19 @@ def dungeon_selection_menu():
     if choice == "1":
         print("You have entered the Slime Cave.")
         dungeon_menu("cave")
+        dungeon_selection_menu()
     elif choice == "2":
         print("You have entered the Spider's Forest.")
         dungeon_menu("forest")
+        dungeon_selection_menu()
     elif choice == "3":
         print("You have entered the Undead Graveyard.")
         dungeon_menu("graveyard")
+        dungeon_selection_menu()
     elif choice == "4":
         print("You have entered the Dragon's Den.")
         dungeon_menu("den")
+        dungeon_selection_menu()
     elif choice == "5":
         return
     else:
@@ -63,8 +144,8 @@ def dungeon_selection_menu():
 def dungeon_menu(location):
     dungeon_monster = Enemy.find_by_location(location)
     while dungeon_monster.current_hp > 0 and player.current_hp > 0:
-        print(dungeon_monster.__repr__())
         print(player.__repr__())
+        print(dungeon_monster.__repr__())
         print("What would you like to do?")
         print("1. Fight")
         print("2. Flee")
@@ -89,6 +170,7 @@ def inn_menu():
     choice = input("> ")
     if choice == "1":
         rest(player)
+        inn_menu()
     elif choice == "2":
         return
 
@@ -103,8 +185,10 @@ def merchant_menu():
     choice = input("> ")
     if choice == "1":
         buy_menu(player, merchant)
+        merchant_menu()
     elif choice == "2":
         buy_menu(merchant, player)
+        merchant_menu()
     elif choice == "3":
         return
 

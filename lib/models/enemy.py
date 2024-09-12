@@ -22,7 +22,7 @@ class Enemy:
         self._location = location
 
     def __repr__(self):
-        return f"{self.name} | HP: {self.current_hp} / {self.max_hp} | Attack: {self.attack}"
+        return f"\033[31m{self.name} | HP: {self.current_hp} / {self.max_hp} | Attack: {self.attack}\033[0m"
 
     @property
     def name(self):

@@ -3,8 +3,6 @@ from models.__init__ import CONN, CURSOR
 
 class Character:
 
-    all = {}
-
     def __init__(self, name, attack, max_hp, current_hp, gold, level, exp, id=None):
         self.id = id
         self.name = name
@@ -18,7 +16,7 @@ class Character:
         self.armor = None
 
     def __repr__(self):
-        return f"{self.name} | HP: {self.current_hp} / {self.max_hp} | Attack: {self.attack} | Gold: {self.gold} | Level: {self.level} | Exp: {self.exp} / {100 * (self.level ** 2)}"
+        return f"\033[34m{self.name} | HP: {self.current_hp} / {self.max_hp} | Attack: {self.attack} | Gold: {self.gold} | Level: {self.level} | Exp: {self.exp} / {100 * (self.level ** 2)}\033[0m"
 
     @property
     def id(self):
@@ -114,16 +112,15 @@ class Character:
             self._attack += 5
             self._max_hp += 100
             self._current_hp = self._max_hp
-            print(f"You have gained {exp_gain} exp.")
-            print(f"You have leveled up to level {self._level}!")
+            print(f"\033[32mYou have gained {exp_gain} exp.")
+            print(f"You have leveled up to level {self._level}!\033[0m")
         else:
-            print(f"You have gained {exp_gain} exp.")
+            print(f"\033[32mYou have gained {exp_gain} exp.\033[0m")
 
     def equip(self, equipment):
         if equipment.type == "weapon":
             if self.weapon is not None:
                 self.unequip(self.weapon)
-
             self.weapon = equipment
             self.attack += equipment.attack
             self.update()
@@ -170,6 +167,7 @@ class Character:
             ),
         )
         CONN.commit()
+        self.id = CURSOR.lastrowid
 
     def update(self):
         sql = """
@@ -233,19 +231,16 @@ class Character:
 
     @classmethod
     def instance_from_db(cls, row):
-        character = cls.all.get(row[0])
-        if character:
-            character.name = row[1]
-            character.attack = row[2]
-            character.max_hp = row[3]
-            character.current_hp = row[4]
-            character.gold = row[5]
-            character.level = row[6]
-            character.exp = row[7]
-        else:
-            character = cls(row[1], row[2], row[3], row[4], row[5], row[6], row[7])
-            character.id = row[0]
-            cls.all[character.id] = character
+        character = cls(
+            id=row[0],
+            name=row[1],
+            attack=row[2],
+            max_hp=row[3],
+            current_hp=row[4],
+            gold=row[5],
+            level=row[6],
+            exp=row[7],
+        )
         return character
 
     @classmethod
@@ -267,3 +262,12 @@ class Character:
         """
         row = CURSOR.execute(sql, (id,)).fetchone()
         return cls.instance_from_db(row) if row else None
+
+    @classmethod
+    def all(cls):
+        sql = """
+            SELECT *
+            FROM characters
+        """
+        rows = CURSOR.execute(sql).fetchall()
+        return [cls.instance_from_db(row) for row in rows]

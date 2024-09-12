@@ -18,10 +18,7 @@ def reset_database():
     Enemy.create_table()
     Equipment.create_table()
 
-    Character.create("Player", 10, 100, 100, 100, 1, 0)
-    Character.create("Merchant", 1000, 1000, 1000, 10000, 100, 0)
-
-    merchant = Character.find_by_id(2)
+    merchant = Character.create("Merchant", 1000, 1000, 1000, 10000, 100, 0)
 
     Enemy.create("Slime", 5, 20, 10, "cave")
     Enemy.create("Spider", 10, 40, 20, "forest")

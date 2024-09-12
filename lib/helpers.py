@@ -4,6 +4,12 @@ from models.enemy import Enemy
 from models.equipment import Equipment
 
 
+def display_characters():
+    for character in Character.all():
+        if not character.name == "Merchant":
+            print(f"\033[33m{character.id}. {character.name}\033[0m")
+
+
 def battle(enemy, player):
     enemy.defend(player.attack)
     print(f"You have dealt {player.attack} damage to the {enemy.name}.")
@@ -11,7 +17,7 @@ def battle(enemy, player):
         print(f"You have defeated the {enemy.name}.")
         player.level_up(enemy.max_hp)
         player.gold += enemy.gold
-        print(f"You have earned {enemy.gold} gold.")
+        print(f"\033[32mYou have earned {enemy.gold} gold.\033[0m")
         print(player.__repr__())
         player.update()
 
@@ -63,6 +69,15 @@ def buy_sell(item_id, buyer, seller):
         print(f"You have bought {item.name} for {item.gold} gold.")
     if buyer.id == 2:
         print(f"You have sold {item.name} for {item.gold} gold.")
+
+
+def character_creation(name, type):
+    if type == "dps":
+        return Character.create(name, 70, 100, 100, 100, 1, 0)
+    elif type == "tank":
+        return Character.create(name, 30, 300, 100, 100, 1, 0)
+    elif type == "balanced":
+        return Character.create(name, 50, 200, 100, 100, 1, 0)
 
 
 def exit_program():
